@@ -117,7 +117,7 @@ func main() {
 
 	writeToc := false
 	if !debugmode {
-		writeToc = (!strings.HasPrefix(strings.ToLower(input(`Do you need indices? e.g. "3.2.2 folder" vs "folder" (Y/n):`)), "n"))
+		writeToc = strings.HasPrefix(strings.ToLower(input(`Do you need indices? e.g. "3.2.2 folder" vs "folder" (N/y):`)), "y")
 	}
 
 	oldlvl := 0
@@ -155,6 +155,9 @@ func main() {
 	}
 
 	emitZip := true
+	if !debugmode {
+		emitZip = strings.HasPrefix(strings.ToLower(input(`Do you need a zip file? (N/y):`)), "y")
+	}
 	if emitZip {
 		outdir, outfn := filepath.Split(listfile)
 		outfn = outfn[:(len(outfn) - len(filepath.Ext(outfn)))] // get rid of extension
