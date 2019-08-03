@@ -9,7 +9,7 @@
  3.2.S.2.2	Description of Manufacturing Process and Process Controls
  3.2.S.2.3	Control of Materials
  3.2.S.2.4	Controls of Critical Steps and Intermediates
- 3.2.S.2.5	Process Validation and/or Evaluation
+ 3.2.S.2.5	Process Validation and Evaluation
  3.2.S.2.6	Manufacturing Process Development
  3.2.S.3	Characterization
  3.2.S.3.1	Elucidation of Structure and other Characteristics
@@ -34,7 +34,7 @@
  3.2.P.3.2	Batch Formula
  3.2.P.3.3	Description of Manufacturing Process and Process Controls
  3.2.P.3.4	Controls of Critical Steps and Intermediates
- 3.2.P.3.5	Process Validation and/or Evaluation
+ 3.2.P.3.5	Process Validation and Evaluation
  3.2.P.4	Control of excipients [{{name}}]
  3.2.P.4.1	Specification(s)
  3.2.P.4.2	Analytical Procedures

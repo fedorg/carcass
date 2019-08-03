@@ -54,39 +54,28 @@ func makeZip(dirnames []string) *bytes.Buffer {
 	return buf
 }
 
-func replaceTokens(text string, tokens []TokenInfo, vals map[string]string) string {
-	offset := 0
-	lastsrcpos := 0
-	slices := []string{}
-	for _, t := range tokens {
-		slices = append(slices, text[lastsrcpos:t.start])
-		lastsrcpos = t.end
-		v, ok := vals[t.name]
+func replaceTokens(text string, vals map[string]string) string {
+	re := regexp.MustCompile(`\{\{[\w\s]+\}\}`)
+	return re.ReplaceAllStringFunc(text, func(tag string) string {
+		name := tag[2:len(tag)-2]
+		v, ok := vals[name]
 		if !ok {
 			v = ""
 		}
-		slices = append(slices, v)
-		srclen := t.end - t.start
-		dstlen := len(v)
-		offset = offset - srclen + dstlen
-	}
-	slices = append(slices, text[lastsrcpos:])
-	ret := strings.Join(slices, "")
-	return ret
+		return v
+	})
 }
 
-func collectTokens(text string) []TokenInfo {
+func collectTokens(text string) []string {
 	re := regexp.MustCompile(`\{\{[\w\s]+\}\}`)
-	lastpos := 0
-	ret := []TokenInfo{}
-	for {
-		haystack := text[lastpos:]
-		found := re.FindStringIndex(haystack)
-		if found == nil {
-			break
-		}
-		ret = append(ret, TokenInfo{haystack[found[0]+2 : found[1]-2], lastpos + found[0], lastpos + found[1]})
-		lastpos = lastpos + found[1]
+	set := map[string]string{}
+	for _, tag := range re.FindAllString(text, -1) {
+		name := tag[2:len(tag)-2]
+		set[name] = tag
+	}
+	ret := []string{}
+	for name := range set {
+		ret = append(ret, name)
 	}
 	return ret
 }
@@ -116,18 +105,15 @@ func main() {
 	// ask for values
 	tokens := collectTokens(content)
 	vars := map[string]string{}
-	for _, v := range tokens {
-		if _, exists := vars[v.name]; exists {
-			continue // skip values that have been initialized
-		}
+	for _, name := range tokens {
 		if !debugmode {
-			vars[v.name] = strings.TrimRight(input(fmt.Sprintf("Enter variable %#v:", v.name)), "\r\n")
+			vars[name] = strings.TrimRight(input(fmt.Sprintf("Enter variable %#v:", name)), "\r\n")
 		} else {
-			vars[v.name] = "DUMMY_" + v.name
+			vars[name] = "DUMMY_" + name
 		}
 	}
 	// perform string substitution
-	content = replaceTokens(content, tokens, vars)
+	content = replaceTokens(content, vars)
 
 	writeToc := false
 	if !debugmode {
