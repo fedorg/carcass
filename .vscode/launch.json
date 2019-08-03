@@ -10,7 +10,7 @@
             "request": "launch",
             "mode": "auto",
             "program": "${fileDirname}",
-            "env": {"ANNEX_DEBUG": "0"},
+            "env": {"ANNEX_DEBUG": "1"},
             "args": []
         }
     ]

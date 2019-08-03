@@ -139,9 +139,12 @@ func main() {
 
 	folders := []string{}
 	scanner := bufio.NewScanner(strings.NewReader(content)) //bufio.NewScanner(file)
+	nogo := regexp.MustCompile(`[/\\<>"?|*]+`)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
-		line = regexp.MustCompile(`[/\\<>"?|*]+`).ReplaceAllString(line, ",")
+		if (nogo.MatchString(line)) {
+			agony(fmt.Errorf("filename should not contain '%v': %v", nogo.String(), line))
+		}
 		parts := strings.SplitN(line, "\t", 2)
 		if len(parts) < 2 {
 			agony(fmt.Errorf("TOC items and title should be separated by a tab '\t' character.\n3.2.S.2\tManufacture\n"))
