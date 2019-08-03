@@ -81,7 +81,7 @@ func collectTokens(text string) []string {
 }
 
 func main() {
-	debugmode = os.Getenv("ANNEX_DEBUG") > "0"
+	debugmode = os.Getenv("CARCASS_DEBUG") > "0"
 	root := "./"
 	var listfile string
 	if len(os.Args) >= 2 {
