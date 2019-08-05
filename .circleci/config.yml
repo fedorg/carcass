@@ -7,7 +7,8 @@ jobs:
     docker:
       # specify the version
       - image: circleci/golang:1.12
-
+        environment:
+          GO111MODULE: "ON"
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
@@ -15,10 +16,10 @@ jobs:
 
     #### TEMPLATE_NOTE: go expects specific checkout path representing url
     #### expecting it in the form of
-    # working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
+    working_directory: /go/src/github.com/fedorg/carcass
     steps:
       - checkout
       # specify any bash command here prefixed with `run: `
-      - run: go get -v -d ./
+      # - run: go get -v -d ./
       # - run: go test -v ./
-      - run: ./build.sh
+      - run: mkdir $HOME/go && GOPATH=$HOME/go ./build.sh
