@@ -7,11 +7,21 @@ script:
   - ls
 
 deploy:
-  skip_cleanup: true
-  provider: releases
-  api_key:
-    secure: BbHDdbVA3JfpRRy6BTB0TfBrvPjFCpBxqmjmRT7oOL/WdGRiVB8Meas0yHerhwpNbfE2NpSzMd/75Rc23eehaG3tmhlU8EL4jftAp3izqXNVvF6mByUITDpNz4cHwomGigYQ1c9eMAap+pvX2OFycUks5fJnzTnsCuUR/jWJVZ6WF+nFcmF+DpnWnjH27samRl7MbvyMMjzjwtu8LFgXnYIwDNvKdHJSCtoAUk/25VoogglgscLbYtk4Eqal9Y4WB/6TzPOoa3tyKxdzzJi0JLUmfiDUBmlOGQkz3fQ5hRn+Mbo2qmtRg8Z1wQp3HC2hZJ3sicYXf2l+MYjE0n94Qs4lLbTSI8kBWzxlhdNKsOuLBbmSJHmuQiGqc/3cTMyEatvYDBRt1mQEWSpwGy19t94PaTnvht28ZKetR5/BSHUhzcreS5MxueZrWHbLP4808GL/akFDxcbNwqx0lBfnMn3AKVVQqnds/RHhtEzg4AFYcTPu6gDGCmxk+/NvFVKpCFsHQQ6DBmnnBS+on4qW73bxEPF2rOSIG93yALtHMQjXYXf3aKMjAOaWN2aHWCTvxLW+04qB0VhkiCba1ZOhoIqYOmAdTLkeX7USdacVFGJrs6yth70K6EX76ESVhkrjY8dTkwnOmV8FM9ou1ehXc34vhHmKUu3vflYgyltl6AE=
-  file: carcass.exe
-  on:
-    repo: fedorg/carcass
-    tags: true
+  - provider: releases
+    file: carcass.exe
+    skip_cleanup: true
+    api_key:
+      secure: BbHDdbVA3JfpRRy6BTB0TfBrvPjFCpBxqmjmRT7oOL/WdGRiVB8Meas0yHerhwpNbfE2NpSzMd/75Rc23eehaG3tmhlU8EL4jftAp3izqXNVvF6mByUITDpNz4cHwomGigYQ1c9eMAap+pvX2OFycUks5fJnzTnsCuUR/jWJVZ6WF+nFcmF+DpnWnjH27samRl7MbvyMMjzjwtu8LFgXnYIwDNvKdHJSCtoAUk/25VoogglgscLbYtk4Eqal9Y4WB/6TzPOoa3tyKxdzzJi0JLUmfiDUBmlOGQkz3fQ5hRn+Mbo2qmtRg8Z1wQp3HC2hZJ3sicYXf2l+MYjE0n94Qs4lLbTSI8kBWzxlhdNKsOuLBbmSJHmuQiGqc/3cTMyEatvYDBRt1mQEWSpwGy19t94PaTnvht28ZKetR5/BSHUhzcreS5MxueZrWHbLP4808GL/akFDxcbNwqx0lBfnMn3AKVVQqnds/RHhtEzg4AFYcTPu6gDGCmxk+/NvFVKpCFsHQQ6DBmnnBS+on4qW73bxEPF2rOSIG93yALtHMQjXYXf3aKMjAOaWN2aHWCTvxLW+04qB0VhkiCba1ZOhoIqYOmAdTLkeX7USdacVFGJrs6yth70K6EX76ESVhkrjY8dTkwnOmV8FM9ou1ehXc34vhHmKUu3vflYgyltl6AE=
+    on:
+      branch: master
+      repo: fedorg/carcass
+      tags: true
+
+  - provider: releases
+    file: carcass.exe
+    skip_cleanup: true
+    api_key:
+      secure: BbHDdbVA3JfpRRy6BTB0TfBrvPjFCpBxqmjmRT7oOL/WdGRiVB8Meas0yHerhwpNbfE2NpSzMd/75Rc23eehaG3tmhlU8EL4jftAp3izqXNVvF6mByUITDpNz4cHwomGigYQ1c9eMAap+pvX2OFycUks5fJnzTnsCuUR/jWJVZ6WF+nFcmF+DpnWnjH27samRl7MbvyMMjzjwtu8LFgXnYIwDNvKdHJSCtoAUk/25VoogglgscLbYtk4Eqal9Y4WB/6TzPOoa3tyKxdzzJi0JLUmfiDUBmlOGQkz3fQ5hRn+Mbo2qmtRg8Z1wQp3HC2hZJ3sicYXf2l+MYjE0n94Qs4lLbTSI8kBWzxlhdNKsOuLBbmSJHmuQiGqc/3cTMyEatvYDBRt1mQEWSpwGy19t94PaTnvht28ZKetR5/BSHUhzcreS5MxueZrWHbLP4808GL/akFDxcbNwqx0lBfnMn3AKVVQqnds/RHhtEzg4AFYcTPu6gDGCmxk+/NvFVKpCFsHQQ6DBmnnBS+on4qW73bxEPF2rOSIG93yALtHMQjXYXf3aKMjAOaWN2aHWCTvxLW+04qB0VhkiCba1ZOhoIqYOmAdTLkeX7USdacVFGJrs6yth70K6EX76ESVhkrjY8dTkwnOmV8FM9ou1ehXc34vhHmKUu3vflYgyltl6AE=
+    on:
+      repo: fedorg/carcass
+    draft: true
