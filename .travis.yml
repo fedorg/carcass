@@ -3,7 +3,7 @@ go:
 - '1.12'
 
 script:
-  - CGO_ENABLED=0 GOOS=windows go build
+  - CGO_ENABLED=0 ./build.sh
   - ls
 
 deploy:

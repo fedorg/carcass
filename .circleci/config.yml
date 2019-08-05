@@ -21,4 +21,4 @@ jobs:
       # specify any bash command here prefixed with `run: `
       - run: go get -v -d ./
       # - run: go test -v ./
-      - run: GOOS=windows go build
+      - run: ./build.sh

@@ -12,6 +12,8 @@ import (
 	"strings"
 )
 
+var CARCASS_VERSION = "undefined"
+
 var debugmode = false
 
 func input(message string) string {
@@ -24,7 +26,9 @@ func input(message string) string {
 func agony(err error) {
 	println("ERROR!")
 	println(err.Error())
-	if !debugmode {input("Press Enter to abort")}
+	if !debugmode {
+		input("Press Enter to abort")
+	}
 	// os.Exit(-1)
 	panic(err)
 }
@@ -57,7 +61,7 @@ func makeZip(dirnames []string) *bytes.Buffer {
 func replaceTokens(text string, vals map[string]string) string {
 	re := regexp.MustCompile(`\{\{[\w\s]+\}\}`)
 	return re.ReplaceAllStringFunc(text, func(tag string) string {
-		name := tag[2:len(tag)-2]
+		name := tag[2 : len(tag)-2]
 		v, ok := vals[name]
 		if !ok {
 			v = ""
@@ -70,7 +74,7 @@ func collectTokens(text string) []string {
 	re := regexp.MustCompile(`\{\{[\w\s]+\}\}`)
 	set := map[string]string{}
 	for _, tag := range re.FindAllString(text, -1) {
-		name := tag[2:len(tag)-2]
+		name := tag[2 : len(tag)-2]
 		set[name] = tag
 	}
 	ret := []string{}
@@ -81,6 +85,7 @@ func collectTokens(text string) []string {
 }
 
 func main() {
+	println("CARCASS " + CARCASS_VERSION)
 	debugmode = os.Getenv("CARCASS_DEBUG") > "0"
 	root := "./"
 	var listfile string
@@ -128,7 +133,7 @@ func main() {
 	nogo := regexp.MustCompile(`[/\\<>"?|*]+`)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
-		if (nogo.MatchString(line)) {
+		if nogo.MatchString(line) {
 			agony(fmt.Errorf("filename should not contain '%v': %v", nogo.String(), line))
 		}
 		parts := strings.SplitN(line, "\t", 2)
@@ -147,7 +152,7 @@ func main() {
 			newfolder = toc + " " + title
 		}
 		curfolder = filepath.Join(curfolder, newfolder)
-		folders = append(folders, curfolder + string(filepath.Separator))
+		folders = append(folders, curfolder+string(filepath.Separator))
 		oldlvl = curlvl
 	}
 	if err := scanner.Err(); err != nil {
