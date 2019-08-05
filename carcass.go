@@ -84,10 +84,49 @@ func collectTokens(text string) []string {
 	return ret
 }
 
+
+func listFiles(sourceDir string, onlyFolders bool) []string {
+	ret := []string{}
+	err := filepath.Walk(sourceDir, func(path string, info os.FileInfo, err error) error {
+		if (info.IsDir() || (!onlyFolders)) {
+			ret = append(ret, path)
+			println(path)
+		}
+		return err
+	})
+	if err != nil {
+		agony(err)
+	}
+	return ret
+}
+
+
 func main() {
 	println("CARCASS " + CARCASS_VERSION)
 	debugmode = os.Getenv("CARCASS_DEBUG") > "0"
 	root := "./"
+	sep := string(filepath.Separator)
+	if !debugmode {
+		gendir := strings.HasPrefix(strings.ToLower(input(`Do you want to generate a file list from a directory?" (N/y):`)), "y")
+		if (gendir) {
+			srcDir := strings.TrimRight(input("Drag a folder into this window and press Enter"), "\r\n")
+			srcDir = filepath.ToSlash(srcDir)
+			if (!strings.HasSuffix(srcDir, sep)) {
+				srcDir = srcDir + sep
+			}
+			filelist := listFiles(srcDir, false)
+			outlist := strings.Join(filelist, "\r\n")
+			outFn := "out_"+strings.ReplaceAll(filepath.Base(srcDir), sep, "")+".txt"
+			outFn, err := filepath.Abs(outFn)
+			if err != nil {
+				agony(err)
+			}
+			ioutil.WriteFile(outFn, []byte(outlist), 0550)
+			fmt.Printf("Output filenames written to: %v", outFn)
+			input("")
+			os.Exit(0)
+		}
+	}
 	var listfile string
 	if len(os.Args) >= 2 {
 		listfile = os.Args[1]

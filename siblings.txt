@@ -1,0 +1,6 @@
+1	springfield
+1	moscow
+1	LA
+1.1	fields
+1.1.1	springs
+1	berlin
