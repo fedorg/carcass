@@ -1,0 +1,17 @@
+language: go
+go:
+- '1.12'
+
+script:
+  - CGO_ENABLED=0 GOOS=windows go build
+  - ls
+
+deploy:
+  skip_cleanup: true
+  provider: releases
+  api_key:
+    secure: nmXVoT7G5IjW2DhrlF5tM0z0yDUftfgHMNdWALx1BujMx4SX32ATJaPRpnafJ9x8yHlLB6OPkyWRSjZBNhrqo0nLoDQW5zSeasHLsAHjSObjoS/QynsLp8XfoRP0S1MR86rikaLBzVdgjkHJZkmWR5+OUrzCreZmD+sk9o9nXVGNTgXRwcZgF+tLQ1WvMwFcd1vRHEKduoZVvzspRAZyP169wW+9Fr9vD2/6Umts5kO+bsZoq0F+XKLoBfAIHF6yt0RmcwsbkrocKf1OrTlt0spjRp5seNuVGXdc7Ss1WxaZraIiqylXLxOVxy2GuVlQ81o7jA/kIbM8xfLYoj9zZZrWU/8vbXXhsnCKeq1DKswnn6dgk9v3NuIWoenK75sDS4II9nGE491fVrhtpO2YZh+7+q976EoXF2BcYhL85KWluMHbfVe4sMf1UbRDjAxrKd+V5WoEZpAjn6rgGsa7rObtUb7MYhBHk6OlJqZs2bibSa0zH8bTc4N4+sjiUT6EE/XDvJw9tegdEMkk4UmmkZXSw8y0Jy7lmqIQDeeU/c6vDcM/MVFY5Etq8WRmpgMO4vu9AWVLx5a5xhrOXRsRtLlN/wY6Jw3nCOZKl/Oj29wGb3ZyT1oAq0964hbyWcvl8ekk5Sts/n0zvOEhS7HRoZOBcWTHDaedWRRarb+A9tU=
+  file: carcass.exe
+  on:
+    repo: fedorg/carcass
+    tags: true
