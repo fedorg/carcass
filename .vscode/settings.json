@@ -16,5 +16,7 @@
     "gopls": {
         "usePlaceholders": true // add parameter placeholders when completing a function
     },
-    "files.eol": "\n", // formatting only supports LF line endings
+    "files.eol": "\n",
+    "python.pythonPath": "C:\\Users\\fed00\\Anaconda3\\envs\\testenv\\python.exe", // formatting only supports LF line endings
+    "python.jediEnabled": false
 }
