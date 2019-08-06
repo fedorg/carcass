@@ -5,12 +5,23 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "internalConsole",
+            "justMyCode": false,
+            "redirectOutput": true
+        },
+        {
             "name": "Launch",
             "type": "go",
             "request": "launch",
             "mode": "auto",
             "program": "${fileDirname}",
-            "env": {"CARCASS_DEBUG": "1"},
+            "env": {
+                "CARCASS_DEBUG": "1"
+            },
             "args": []
         }
     ]

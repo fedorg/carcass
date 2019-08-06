@@ -10,13 +10,19 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 )
 
 var CARCASS_VERSION = "undefined"
 
+const sep = string(filepath.Separator)
+
 var debugmode = false
 
 func input(message string) string {
+	if debugmode {
+		return ""
+	}
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println(message)
 	text, _ := reader.ReadString('\n')
@@ -84,11 +90,32 @@ func collectTokens(text string) []string {
 	return ret
 }
 
+func addTrailingSlash(dirname, separator string) string {
+	ret := "" + dirname
+	if !strings.HasSuffix(dirname, separator) {
+		ret = dirname + separator
+	}
+	return ret
+}
 
 func listFiles(sourceDir string, onlyFolders bool) []string {
 	ret := []string{}
 	err := filepath.Walk(sourceDir, func(path string, info os.FileInfo, err error) error {
-		if (info.IsDir() || (!onlyFolders)) {
+		if err != nil {
+			// println("-- Retrying "+path)
+			// time.Sleep(time.Second * 1)
+			// info, err = os.Stat(path) // retry
+			if err != nil {
+				println(">> ERROR: " + path)
+				fmt.Println(err)
+				ret = append(ret, ">> ERROR: "+path)
+				return nil
+			}
+		}
+		if info.IsDir() || (!onlyFolders) {
+			if info.IsDir() {
+				path = addTrailingSlash(path, sep)
+			}
 			ret = append(ret, path)
 			println(path)
 		}
@@ -100,32 +127,36 @@ func listFiles(sourceDir string, onlyFolders bool) []string {
 	return ret
 }
 
+func doGenDir(srcDir string) {
+	srcDir = filepath.ToSlash(srcDir)
+	srcDir = addTrailingSlash(srcDir, sep)
+	outFn := "out_" + strings.ReplaceAll(filepath.Base(srcDir), sep, "") + "_" + time.Now().Format("20060102150405") + ".txt"
+	outFn, err := filepath.Abs(outFn)
+	filelist := listFiles(srcDir, false)
+	outlist := strings.Join(filelist, "\r\n")
+	if err != nil {
+		agony(err)
+	}
+	ioutil.WriteFile(outFn, []byte(outlist), 0550)
+	fmt.Printf("Output filenames written to: %v", outFn)
+	input("")
+}
 
 func main() {
 	println("CARCASS " + CARCASS_VERSION)
 	debugmode = os.Getenv("CARCASS_DEBUG") > "0"
 	root := "./"
-	sep := string(filepath.Separator)
+	gendir := true
 	if !debugmode {
-		gendir := strings.HasPrefix(strings.ToLower(input(`Do you want to generate a file list from a directory?" (N/y):`)), "y")
-		if (gendir) {
-			srcDir := strings.TrimRight(input("Drag a folder into this window and press Enter"), "\r\n")
-			srcDir = filepath.ToSlash(srcDir)
-			if (!strings.HasSuffix(srcDir, sep)) {
-				srcDir = srcDir + sep
-			}
-			filelist := listFiles(srcDir, false)
-			outlist := strings.Join(filelist, "\r\n")
-			outFn := "out_"+strings.ReplaceAll(filepath.Base(srcDir), sep, "")+".txt"
-			outFn, err := filepath.Abs(outFn)
-			if err != nil {
-				agony(err)
-			}
-			ioutil.WriteFile(outFn, []byte(outlist), 0550)
-			fmt.Printf("Output filenames written to: %v", outFn)
-			input("")
-			os.Exit(0)
+		gendir = strings.HasPrefix(strings.ToLower(input(`Do you want to generate a file list from a directory?" (N/y):`)), "y")
+	}
+	if gendir {
+		srcDir := "./"
+		if !debugmode {
+			srcDir = strings.TrimRight(input("Drag a folder into this window and press Enter"), "\r\n")
 		}
+		doGenDir(srcDir)
+		os.Exit(0)
 	}
 	var listfile string
 	if len(os.Args) >= 2 {
@@ -191,7 +222,7 @@ func main() {
 			newfolder = toc + " " + title
 		}
 		curfolder = filepath.Join(curfolder, newfolder)
-		folders = append(folders, curfolder+string(filepath.Separator))
+		folders = append(folders, curfolder+sep)
 		oldlvl = curlvl
 	}
 	if err := scanner.Err(); err != nil {
@@ -217,8 +248,7 @@ func main() {
 		if err != nil {
 			agony(err)
 		}
-	}
-	{
+	} else {
 		// actually create dirs
 		for _, relpath := range folders {
 			fullpath := filepath.Join(root, relpath)
