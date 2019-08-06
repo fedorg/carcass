@@ -11,7 +11,8 @@
             "program": "${file}",
             "console": "internalConsole",
             "justMyCode": false,
-            "redirectOutput": true
+            "redirectOutput": true,
+            "envFile": "${workspaceFolder}/.env"
         },
         {
             "name": "Launch",
