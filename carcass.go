@@ -211,6 +211,12 @@ func doGenDir(srcDir string, plain bool) {
 	input("")
 }
 
+func cleanInputFilename(fn string) string {
+	clean := strings.Trim(fn, `"`)
+	clean = filepath.ToSlash(clean)
+	return clean
+}
+
 func main() {
 	println("CARCASS " + CARCASS_VERSION)
 	debugmode = os.Getenv("CARCASS_DEBUG") > "0"
@@ -225,6 +231,7 @@ func main() {
 		if !debugmode {
 			srcDir = strings.TrimRight(input("Drag a folder into this window and press Enter"), "\r\n")
 		}
+		srcDir = cleanInputFilename(srcDir)
 		doGenDir(srcDir, every)
 		os.Exit(0)
 	}
@@ -235,7 +242,7 @@ func main() {
 	} else {
 		if !debugmode {
 			listfile = strings.TrimRight(input("Drag a template file into this window and press Enter"), "\r\n")
-			listfile = filepath.ToSlash(listfile)
+			listfile = cleanInputFilename(listfile)
 		} else {
 			listfile = `ectdmodule3.txt`
 		}
