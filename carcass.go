@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+	"sort"
 )
 
 var CARCASS_VERSION = "undefined"
@@ -112,9 +113,10 @@ func listFiles(sourceDir string, onlyFolders bool) []string {
 				return nil
 			}
 		}
+		path = filepath.ToSlash(path)
 		if info.IsDir() || (!onlyFolders) {
 			if info.IsDir() {
-				path = addTrailingSlash(path, sep)
+				path = addTrailingSlash(path, "/")
 			}
 			ret = append(ret, path)
 			println(path)
@@ -127,12 +129,79 @@ func listFiles(sourceDir string, onlyFolders bool) []string {
 	return ret
 }
 
-func doGenDir(srcDir string) {
+/// tries to fix directory lists without slashes; sorts list so that dirs appear before contained files
+func fixDirList(filenames []string) []string {
+	fncopy := append([]string{}, filenames...)
+	sort.Strings(fncopy) // arrange directories above files
+	ret := []string{}
+	for i := range fncopy {
+		this := filepath.ToSlash(fncopy[i])
+		if (i+1 == len(fncopy)) { // OOB check
+			ret = append(ret, this)
+			continue
+		}
+		thisAsDir := addTrailingSlash(this, "/")
+		next := filepath.ToSlash(fncopy[i+1])
+
+		isChild := ((len(next) > len(this)) && (next[:len(this)+1] == thisAsDir))
+		isSame := (this == next)
+		if (isChild || isSame) {
+			ret = append(ret, thisAsDir)
+		} else {
+			ret = append(ret, this)
+		}
+	}
+	return ret
+}
+
+// directories should have a slash at the end for this to work
+func convertToToc(root string, filenames []string) []string {
+	sortedFns := fixDirList(filenames)
+	parts := [][]string{}
+	for _, fn := range sortedFns {
+		if (!strings.HasSuffix(fn, "/")) {
+			continue // leave only directories
+		}
+		rel, err := filepath.Rel(root, fn)
+		if err != nil {
+			agony(err)
+		}
+		rel = filepath.ToSlash(rel)
+		rel = addTrailingSlash(rel, "/")
+		tokens := strings.Split(rel, "/")
+		tokens = tokens[:len(tokens) - 1] // get rid of trailing slash (dirs only)
+		if (len(tokens) == 0) {
+			fmt.Printf("Warning: directory %v: filename components should not be empty", fn)
+			continue
+		}
+		parts = append(parts, tokens)
+	}
+	/// takes a list of filename parts and converts to "1.1.1.1\t dirname"
+	ret := []string{}
+	for _, p := range parts {
+		if (len(p) == 0) {
+			// fmt.Printf("Warning: directory #%v : filename components should not be empty", i)
+			continue
+		}
+		toc := "1"
+		for range p {
+			toc = toc + ".1"
+		}
+		toc = toc + "\t" + p[len(p) - 1]
+		ret = append(ret, toc)
+	}
+	return ret
+}
+
+func doGenDir(srcDir string, plain bool) {
 	srcDir = filepath.ToSlash(srcDir)
-	srcDir = addTrailingSlash(srcDir, sep)
+	srcDir = addTrailingSlash(srcDir, "/")
 	outFn := "out_" + strings.ReplaceAll(filepath.Base(srcDir), sep, "") + "_" + time.Now().Format("20060102150405") + ".txt"
 	outFn, err := filepath.Abs(outFn)
 	filelist := listFiles(srcDir, false)
+	if (!plain) {
+		filelist = convertToToc(srcDir, filelist)
+	}
 	outlist := strings.Join(filelist, "\r\n")
 	if err != nil {
 		agony(err)
@@ -148,14 +217,15 @@ func main() {
 	root := "./"
 	gendir := true
 	if !debugmode {
-		gendir = strings.HasPrefix(strings.ToLower(input(`Do you want to generate a file list from a directory?" (N/y):`)), "y")
+		gendir = strings.HasPrefix(strings.ToLower(input(`Do you want to generate a file list from a directory? (N/y):`)), "y")
 	}
 	if gendir {
+		every := strings.HasPrefix(strings.ToLower(input(`List every file? (N/y):`)), "y")
 		srcDir := "./"
 		if !debugmode {
 			srcDir = strings.TrimRight(input("Drag a folder into this window and press Enter"), "\r\n")
 		}
-		doGenDir(srcDir)
+		doGenDir(srcDir, every)
 		os.Exit(0)
 	}
 	var listfile string
